@@ -23,25 +23,22 @@ def str2kmer(nucl,scores):
     
 
 def stream_kmers(seq, k):
-    list_kmer=[]
     kmer=0
     revkmer=0
     mask=(1<<((k-1)*2))-1
-    revmask=(1<<(k*2))-1-3
     scores={"A":0,"C":1,"T":2,"G":3}
     rscores={"A":2,"C":3,"T":0,"G":1}
-    for i in range(k-1):
+    for ind in range(k-1):
         kmer=kmer<<2
         revkmer=revkmer>>2
-        kmer+=str2kmer(seq[i],scores)
-        revkmer+=str2kmer(seq[i],rscores)<<(k-1)*2
+        kmer+=str2kmer(seq[ind],scores)
+        revkmer+=str2kmer(seq[ind],rscores)<<(k-1)*2
     for nucl in seq[k-1:]:
         kmer=kmer&mask
-        #revkmer=revkmer&revmask
         kmer=kmer<<2
         revkmer=revkmer>>2
         kmer+=str2kmer(nucl,scores)
         revkmer+=str2kmer(nucl,rscores)<<(k-1)*2
-        list_kmer.append(min(kmer, revkmer))
-    return list_kmer
+        
+        yield kmer,revkmer
         
